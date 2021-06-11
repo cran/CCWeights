@@ -12,7 +12,7 @@ observeEvent(input$caliDo, {
 
   suppressWarnings(
 
-    shiny::withProgress(message = 'Calibration in progress',
+    shiny::withProgress(message = 'Quantification in progress',
                         detail = 'It may take a while...', value = 0.3,{
 
                           M1 <- userInput() %>%
@@ -50,7 +50,7 @@ observeEvent(input$caliDo, {
 
                           output$caliSave<- downloadHandler(
                             filename = function() {
-                              paste("calibrationResults_", ".csv", sep="")
+                              paste("quantificationResultsƒ", ".csv", sep="")
                             },
                             content = function(file) {
                               write.csv(CaliFinal, file, row.names = FALSE)

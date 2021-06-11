@@ -10,9 +10,13 @@ fluidRow(
            collapsible = TRUE,
            collapsed = FALSE,
            closable = FALSE,
-           p("The assumption of homoscedasticity is central to linear regression models.
-             Homoscedasticity describes a situation in which the error term is the same across all values of the independent variables."),
-           p("1. You can customize the p-value to test the homoscedasticity of your dataset.")
+           p("It has been suggested that a weighting factor should only be used when homoscedasticity is not met for analytical data.
+             CCWeights first tests data homoscedasticity by calculating the probability that the variance of measurements at the highest
+             concentration level is smaller than the variance of measurements at the lowest concentration level using an F-test."),
+           p("The test of homoscedasticity is accepted when", span("Experimental F value", style = "color:#f15c42"), "is smaller than corresponding",
+             span("Critical F value (or F Table value)", style = "color:#f15c42"), "at confidence of", span("99% (i.e., 1 - p-value).", style = "color:#f15c42")),
+           p("1. You can customize the p-value to test the homoscedasticity of your dataset."),
+           p("2. You can click", strong('+'), "and", strong('-'), "in the tab to show or hide the contents in the tab.")
            )
          ),
 

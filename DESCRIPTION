@@ -1,7 +1,7 @@
 Package: CCWeights
 Type: Package
 Title: Perform Weighted Linear Regression for Calibration Curve
-Version: 0.1.2
+Version: 0.1.3
 Author: Yonghui Dong
 Maintainer: Yonghui Dong <yonghui.dong@gmail.com>
 Description: Automated assessment and selection of weighting factors for accurate quantification using linear calibration curve. 
@@ -14,6 +14,6 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2021-05-26 17:18:13 UTC; dong
+Packaged: 2021-06-11 06:41:12 UTC; dong
 Repository: CRAN
-Date/Publication: 2021-05-27 08:50:02 UTC
+Date/Publication: 2021-06-11 06:50:02 UTC

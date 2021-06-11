@@ -37,7 +37,7 @@ bs4DashPage(
       bs4SidebarMenuItem("Upload Data", tabName = "inputdata", icon = "upload"),
       bs4SidebarMenuItem("Homoscedasticity Test", tabName = "homoscedasticity", icon = "check"),
       bs4SidebarMenuItem("Weights Test", tabName = "weights", icon = "balance-scale"),
-      bs4SidebarMenuItem("Calibration", tabName = "calibration", icon = "chart-bar"),
+      bs4SidebarMenuItem("Quantification", tabName = "quantification", icon = "chart-bar"),
       bs4SidebarMenuItem("Contact", tabName = "contact", icon = "user")
       )
     ),
@@ -58,7 +58,7 @@ bs4DashPage(
                  source("ui-tab-homoscedasticity.R", local=TRUE)$value),
       bs4TabItem("weights",
                  source("ui-tab-weights.R", local=TRUE)$value),
-      bs4TabItem("calibration",
+      bs4TabItem("quantification",
                  source("ui-tab-calibration.R", local=TRUE)$value),
       bs4TabItem("contact",
                  source("ui-tab-contact.R", local=TRUE)$value)
@@ -73,7 +73,7 @@ bs4DashPage(
       column(
         width = 12,
         align = "center",
-        "Blavatnic Center for Drug Discovery (BCDD)",
+        "Blavatnik Center for Drug Discovery (BCDD)",
         br(),
         "Tel Aviv University",
         br(),

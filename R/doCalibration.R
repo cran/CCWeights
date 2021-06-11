@@ -16,11 +16,37 @@
 
 doCalibration <- function(DF, weights = NULL){
 
-  ## suppress the warning: no visible binding for global variable ‘Concentration’
+  ## suppress the warning: no visible binding for global variable ‘Concentration’, 'Attention' and 'Compound'
   Concentration <- NULL
+  Attention <- NULL
+  Compound <- NULL
+  Response <- NULL
+  minR <- NULL
+  maxR <- NULL
+
+  ## Get the calibration range for each compound
+  if (is.null(DF$Compound)) {DF$Compound = "X"}
+  DFC <- DF %>%
+    dplyr::filter(Concentration != 'unknown') %>%
+    dplyr::group_by(Compound) %>%
+    dplyr::mutate(minR = min(Response), maxR = max(Response)) %>%
+    dplyr::select(Compound, minR, maxR) %>%
+    dplyr::distinct_all()
+
   ## select only samples
-  DFA <- DF %>%
+  DFS <- DF %>%
     dplyr::filter(Concentration == 'unknown')
+
+  ## join the two DF
+  DFS2 <- dplyr::right_join(DFS, DFC, by = "Compound")
+
+  ## set attention for compound responses that is out of calibration range
+  DFS2$Attention = "no"
+  DFA <- DFS2 %>%
+    dplyr::mutate(Attention = ifelse(Response > maxR | Response < minR , 'response out of calibration range', Attention)) %>%
+    dplyr::select(Concentration, Response, Compound, Attention)
+
+  ## Quantification
 
   if(nrow(DFA) > 0){
 
