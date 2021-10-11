@@ -14,14 +14,18 @@
 
 doWlm <- function(DF, weights = NULL) {
 
-  ## suppress the warning: no visible binding for global variable ‘Concentration’ and 'Compound'
-  Concentration <- NULL
+  ## suppress the warning: no visible binding for global variable
+  Concentration <- Compound <- Response <- "." <- NULL
 
   #(1) prepare the data
-  # remove samples, keep only STD
+  # remove samples, keep only STD, remove missing values or where Response  = 0, and remove Concentration without replicates
   DF <- DF %>%
     dplyr::filter(Concentration != 'unknown') %>%
-    dplyr::mutate(Concentration = as.numeric(Concentration))
+    dplyr::filter(stats::complete.cases(.)) %>%
+    dplyr::filter(Response > 0) %>%
+    dplyr::mutate(Concentration = as.numeric(Concentration)) %>%
+    dplyr::group_by(Concentration) %>%
+    dplyr::filter(dplyr::n() > 1)
 
   ## calculate IS normalized peak areas if IS are used
   if (is.null(DF$IS)) {
@@ -43,10 +47,10 @@ doWlm <- function(DF, weights = NULL) {
     models <- lm(y ~ x, weights = eval(parse(text = weights)))
   }
 
-  if(is.null(weights)){
-    models <- lm(y ~ x)
-    weights = "1"
-  }
+  # if(is.null(weights)){
+  #   models <- lm(y ~ x)
+  #   weights = "1"
+  # }
 
   #(2) residual plot
   myResid <- resid(models)
@@ -84,10 +88,10 @@ doWlm <- function(DF, weights = NULL) {
   b = format(unname(coef(models)[2]), digits = 4)
   r2 = format(summary(models)$r.squared, digits = 4)
 
-  ## get regression plot
-  PLinear <- plotly::plot_ly(DF,
-                             x = ~Concentration,
-                             y = ~Ratio,
+  ## get regression plot, need to convert DF as dataframe, otherwise the regression line will not be shown
+  PLinear <- plotly::plot_ly(as.data.frame(DF),
+                             x = ~ Concentration,
+                             y = ~ Ratio,
                              type = "scatter",
                              mode = "markers") %>%
     plotly::add_markers(marker = list(size = 10,
@@ -95,7 +99,9 @@ doWlm <- function(DF, weights = NULL) {
                                       line = list(color = 'rgba(152, 0, 0, .8)', width = 2))) %>%
     plotly::add_lines(x = ~ Concentration,
                       y = fitted(models),
-                      line = list(width = 2, dash = "dot", color = 'rgba(152, 0, 0, .8)')) %>%
+                      line = list(width = 2,
+                                  dash = "dot",
+                                  color = 'rgba(152, 0, 0, .8)')) %>%
     plotly::layout(yaxis = list(title = "Reponse")) %>%
     plotly::add_annotations(x = mean(x) * 0.8, y = max(y) * 0.9,
                             text = paste("y = ", a, " + ", b, "x", " , ", "R<sup>2</sup>", " = ", r2, sep = ""),

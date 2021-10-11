@@ -3,7 +3,7 @@
 #' @author Yonghui Dong
 #' @param DF data frame, it must contain a column named 'Concentration' and a column named 'Response'
 #' @param weights default is NULL
-#' @importFrom stats predict
+#' @importFrom stats predict complete.cases
 #' @importFrom magrittr %>%
 #' @export
 #' @return dataframe, the quantification result
@@ -16,16 +16,18 @@
 
 doCalibration <- function(DF, weights = NULL){
 
-  ## suppress the warning: no visible binding for global variable ‘Concentration’, 'Attention' and 'Compound'
-  Concentration <- NULL
-  Attention <- NULL
-  Compound <- NULL
-  Response <- NULL
-  minR <- NULL
-  maxR <- NULL
+  ## suppress the warning: no visible binding for global variable
+  Concentration <- Attention <- Compound <- Response <- minR <- maxR <- "." <- NULL
 
   ## Get the calibration range for each compound
   if (is.null(DF$Compound)) {DF$Compound = "X"}
+
+  DF <- DF %>%
+    dplyr::filter(stats::complete.cases(.)) %>%
+    dplyr::filter(Response > 0) %>%
+    dplyr::group_by(Concentration) %>%
+    dplyr::filter(dplyr::n() > 1)
+
   DFC <- DF %>%
     dplyr::filter(Concentration != 'unknown') %>%
     dplyr::group_by(Compound) %>%

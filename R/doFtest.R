@@ -10,14 +10,15 @@
 #' @return dataframe, F test result
 #' @examples
 #' Concentration <- rep(c(10, 50, 100, 500), each = 3)
-#' Response <- c(133, 156, 177, 1300, 1450, 1600, 4000, 3881, 3700, 140000, 139000, 140000)
+#' Response <- c(133, 156, 177, 1300, 1450, 1600, 4000, 3881, 3700, 140000, 134000, 140000)
 #' DF <- cbind.data.frame(Concentration, Response)
 #' result <- doFtest(DF, p = 0.01)
 
 doFtest <- function(DF, p = 0.01, lower.tail = FALSE){
 
-  ## suppress the warning: no visible binding for global variable ‘Concentration’ and 'Compound'
-  Concentration <- Compound <- NULL
+  ## suppress the warning: no visible binding for global variable
+  Concentration <- Compound <- Response <- "." <- NULL
+
   # calculate IS normalized peak areas if IS are used
   if (is.null(DF$IS)) {
     DF$Ratio = DF$Response
@@ -28,10 +29,14 @@ doFtest <- function(DF, p = 0.01, lower.tail = FALSE){
   # Assign the compound name if it is not specified
   if (is.null(DF$Compound)) {DF$Compound = "X"}
 
-  # remove samples, keep only STD
+  # remove samples, keep only STD, remove missing values or where Response  = 0, and remove Concentration without replicates
   DF <- DF %>%
     dplyr::filter(Concentration != 'unknown') %>%
-    dplyr::mutate(Concentration = as.numeric(Concentration))
+    dplyr::filter(stats::complete.cases(.)) %>%
+    dplyr::filter(Response > 0) %>%
+    dplyr::mutate(Concentration = as.numeric(Concentration)) %>%
+    dplyr::group_by(Concentration) %>%
+    dplyr::filter(dplyr::n() > 1)
 
   # test homoscedasticity per compound
   DF$Compound <- as.factor(DF$Compound)
