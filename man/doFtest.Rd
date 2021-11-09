@@ -21,7 +21,7 @@ perform F test to evaluate homoscedasticity.
 }
 \examples{
 Concentration <- rep(c(10, 50, 100, 500), each = 3)
-Response <- c(133, 156, 177, 1300, 1450, 1600, 4000, 3881, 3700, 140000, 134000, 140000)
+Response <- c(133, 156, 177, 1300, 1450, 1600, 4000, 3881, 3700, 140000, 139000, 140000)
 DF <- cbind.data.frame(Concentration, Response)
 result <- doFtest(DF, p = 0.01)
 }
